@@ -1,15 +1,7 @@
-from os import getenv
 from sys import exit
 import argparse
 
-from pymongo import MongoClient
-
-connection_string = getenv('BIFROST_DB_KEY')
-if not connection_string:
-    print("ERROR: envvar BIFROST_DB_KEY not set.")
-    exit(1)
-connection = MongoClient(connection_string)
-db = connection.get_database()
+from init_mongo_connection import db
 
 parser = argparse.ArgumentParser(
     description='Find and optionally delete a run and related documents from MongoDB.')
@@ -21,3 +13,6 @@ args = parser.parse_args()
 if args.inst not in ['ssi', 'fvst']:
     print("ERROR: inst must be either 'ssi' or 'fvst'.")
     exit(1)
+
+runs = db.runs.find({})
+print(list(runs))
