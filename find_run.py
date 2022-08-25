@@ -1,5 +1,6 @@
 from sys import exit
 import argparse
+import re
 
 from init_mongo_connection import db
 
@@ -14,5 +15,7 @@ if args.inst not in ['ssi', 'fvst']:
     print("ERROR: inst must be either 'ssi' or 'fvst'.")
     exit(1)
 
-runs = db.runs.find({})
+prefix: str = '.*N_WGS_' if args.inst == 'ssi' else '[Rr][Uu][Nn]'
+regex = re.compile(prefix + args.name + '.*')
+runs = db.runs.find({'name':  regex})
 print(list(runs))
