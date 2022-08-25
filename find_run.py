@@ -18,4 +18,5 @@ if args.inst not in ['ssi', 'fvst']:
 prefix: str = '.*N_WGS_' if args.inst == 'ssi' else '[Rr][Uu][Nn]'
 regex = re.compile(prefix + args.part + '.*')
 runs = db.runs.find({'name':  regex})
-print(list(runs))
+number_of_runs = db.runs.count_documents({'name':  regex})
+print(number_of_runs)
