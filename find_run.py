@@ -17,6 +17,10 @@ if args.inst not in ['ssi', 'fvst']:
 
 prefix: str = '.*N_WGS_' if args.inst == 'ssi' else '[Rr][Uu][Nn]'
 regex = re.compile(prefix + args.part + '.*')
-runs = db.runs.find({'name':  regex})
 number_of_runs = db.runs.count_documents({'name':  regex})
-print(number_of_runs)
+if number_of_runs == 0:
+    print("No matching runs found.")
+elif number_of_runs == 1:
+    print("1 matching run found:")
+    run = (next(db.runs.find({'name':  regex})))
+    print(f"_id: {run['_id']}, name: {run['name']}")
