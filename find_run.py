@@ -5,7 +5,9 @@ import re
 from init_mongo_connection import db
 
 def delete_run(run):
-    print("Use some earlier code here to delete the run and related documents.")
+    really_delete = input("Delete this run and related documents (y/N)? ")
+    if really_delete == 'y':
+        print("Use some earlier code here to delete the run and related documents.")
 
 parser = argparse.ArgumentParser(
     description='Find and optionally delete a run and related documents from MongoDB.')
