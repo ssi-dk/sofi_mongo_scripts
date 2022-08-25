@@ -4,7 +4,11 @@ import argparse
 
 from pymongo import MongoClient
 
-mongo = MongoClient(getenv('MONGO_CONNECTION'))
+connection_string = getenv('BIFROST_DB_KEY')
+if not connection_string:
+    print("ERROR: envvar BIFROST_DB_KEY not set.")
+    exit(1)
+mongo = MongoClient(connection_string)
 
 parser = argparse.ArgumentParser(
     description='Find and optionally delete a run and related documents from MongoDB.')
