@@ -2,14 +2,15 @@ from sys import exit
 import argparse
 import re
 
-from api import db, sample_component, samples
+import api
+from api import db
 
 def delete_run(run):
     really_delete = input("Delete this run and related documents (y/N)? ")
     if really_delete == 'y':
         # Delete sample and sample_component documents
         for run_sample in run['samples']:
-            sample = samples.get_sample_by_id(db, run_sample['_id'])
+            sample = api.samples.get_sample_by_id(db, run_sample['_id'])
             if sample is None:
                 print(f"Consistency warning: a sample that is referenced in the run does not exist in samples collection:")
                 print(run_sample)
@@ -27,11 +28,11 @@ def delete_run(run):
                 for oid in sample_component_object_ids:
                     # Delete sample_component document
                     if not args.fake:
-                        sample_component.delete_sample_component_by_id(oid)
+                        api.sample_component.delete_sample_component_by_id(oid)
                 print(f"Deleted {len(sample_components)} sample_component documents (unless fake)")
                 # Delete sample document
                 if not args.fake:
-                    samples.delete_sample_by_id(run_sample['_id'])
+                    api.samples.delete_sample_by_id(run_sample['_id'])
                 print(f"Deleted sample document with id {run_sample['_id']} (unless fake)")
 
         # Delete run document

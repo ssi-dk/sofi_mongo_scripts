@@ -2,8 +2,6 @@ import re
 import pymongo
 from bson.objectid import ObjectId
 
-from .utils import get_connection, FLD
-
 
 def get_all_samples(connection_name = "default"):
     connection = get_connection(connection_name)

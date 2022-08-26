@@ -1,9 +1,6 @@
 import pymongo
 from bson.objectid import ObjectId
 
-from .utils import get_connection, date_now
-
-
 def save_sample_component(data_dict, connection_name = "default"):
     """COPIED FROM BIFROSTLIB. Insert sample dict into mongodb.
     Return the dict with an _id element"""
