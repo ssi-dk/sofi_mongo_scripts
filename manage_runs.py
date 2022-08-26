@@ -61,3 +61,11 @@ for run in runs:
         really_delete = input("Delete this run and related documents (y/N)? ")
         if really_delete == 'y':
             delete_run(run)
+        # Now for the sap_analysis_results part.
+        number_of_sap_analysis_results = db.sap_analysis_results.count_documents({'run_id': regex})
+        print()
+        print(f"{number_of_sap_analysis_results} seemingly related SOFI analysis result(s) found.")
+        print()
+        sap_analysis_results = db.sap_analysis_results.find({'run_id': regex})
+        for a in sap_analysis_results:
+            print(f"_id: {a['_id']}, run_id: {a['run_id']}")
