@@ -2,13 +2,13 @@ import pymongo
 from bson.objectid import ObjectId
 
 
-def check_run_name(db, name, connection_name = "default"):
+def check_run_name(db, name):
     # Fastest.
     run = db.runs.find({"name": name}).explain().get('executionStats', None).get('nReturned', 0)
     return run != 0
 
 
-def get_run_list(db, run_type = None, connection_name = "default"):
+def get_run_list(db, run_type = None):
     if run_type is None:
         query = {}
     elif isinstance(run_type, list):
@@ -22,7 +22,7 @@ def get_run_list(db, run_type = None, connection_name = "default"):
     return runs
 
 
-def get_last_runs(db, run, n, runtype, connection_name = "default"):
+def get_last_runs(db, run, n, runtype):
 
     run = db.runs.find_one({"name": run})
     run_date = run.get("metadata", {}).get("created_at")
@@ -42,30 +42,30 @@ def get_last_runs(db, run, n, runtype, connection_name = "default"):
                              {"name": 1, "samples": 1}).sort([['metadata.created_at', pymongo.DESCENDING]]).limit(n))
 
 
-def get_run(db, run_name, connection_name = "default"):
+def get_run(db, run_name):
     # Return only one run or None.
     return db.runs.find_one({"name": run_name})
 
 
-def get_runs(db, run_name, connection_name = "default"):
+def get_runs(db, run_name):
     # Return a list of runs or None.
     return db.runs.find({"name": run_name})
 
 
-def get_run_by_id(db, run_id, connection_name = "default"):
+def get_run_by_id(db, run_id):
     return db.runs.find_one({"_id": ObjectId(run_id)})
 
 
-def delete_run_by_id(db, run_id, connection_name = "default"):
+def delete_run_by_id(db, run_id):
     return db.runs.delete_one({"_id": ObjectId(run_id)})
 
 
-def get_comment(db, run_id, connection_name = "default"):
+def get_comment(db, run_id):
     return db.runs.find_one(
         {"_id": run_id}, {"Comments": 1})
 
 
-def set_comment(db, run_id, comment, connection_name = "default"):
+def set_comment(db, run_id, comment):
     ret = db.runs.find_one_and_update(
         {"_id": run_id}, {"$set": {"Comments": comment}})
     if ret is not None:

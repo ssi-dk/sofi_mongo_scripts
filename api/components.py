@@ -1,7 +1,7 @@
 import pymongo
 
 
-def get_component(db, name = None, version = None, connection_name = "default"):
+def get_component(db, name = None, version = None):
     """
     If no version is specified, it'll get the latest.
     """
