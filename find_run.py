@@ -4,11 +4,6 @@ import re
 
 from init_mongo_connection import db
 
-def delete_run(run):
-    really_delete = input("Delete this run and related documents (y/N)? ")
-    if really_delete == 'y':
-        print("Use some earlier code here to delete the run and related documents.")
-
 parser = argparse.ArgumentParser(
     description='Find and optionally delete a run and related documents from MongoDB.')
 parser.add_argument('inst', type=str, help="Institution, either 'ssi' or 'fvst'")
@@ -28,4 +23,6 @@ runs = db.runs.find({'name':  regex})
 for run in runs:
     print(f"_id: {run['_id']}, name: {run['name']}")
     if args.delete:
-        delete_run(run)
+        really_delete = input("Delete this run and related documents (y/N)? ")
+        if really_delete == 'y':
+            pass
