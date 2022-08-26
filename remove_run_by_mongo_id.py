@@ -23,6 +23,7 @@ answer = input("Continue (y/n)? ")
 if not answer in ['Y', 'y']:
     exit()
 
+# Delete sample and sample_component documents
 for run_sample in run['samples']:
     sample = api.samples.get_sample_by_id(run_sample['_id'])
     if sample is None:
