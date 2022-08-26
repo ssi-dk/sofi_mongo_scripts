@@ -69,3 +69,8 @@ print(f"Found {number_of_sap_analysis_results} SOFI analysis result(s) found rel
 sap_analysis_results = db.sap_analysis_results.find({'run_id': regex})
 for a in sap_analysis_results:
     print(f"_id: {a['_id']}, run_id: {a['run_id']}")
+if args.delete:
+    really_delete = input("Should these be deleted (y/N)? ")
+    if really_delete == 'y':
+        # Todo: do the deletion.
+        pass
