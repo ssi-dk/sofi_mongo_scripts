@@ -28,11 +28,11 @@ def delete_run(run):
                 for oid in sample_component_object_ids:
                     # Delete sample_component document
                     if not args.fake:
-                        api.sample_components.delete_sample_component_by_id(oid)
+                        api.sample_components.delete_sample_component_by_id(db, oid)
                 print(f"Deleted {len(sample_components)} sample_component documents (unless fake)")
                 # Delete sample document
                 if not args.fake:
-                    api.samples.delete_sample_by_id(run_sample['_id'])
+                    api.samples.delete_sample_by_id(db, run_sample['_id'])
                 print(f"Deleted sample document with id {run_sample['_id']} (unless fake)")
 
         # Delete run document
