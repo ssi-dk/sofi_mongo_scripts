@@ -48,9 +48,7 @@ def get_sample_component_by_id(sample_component_id, connection_name = "default")
     db = connection.get_database()
     return db.sample_components.find_one({"_id": ObjectId(sample_component_id)})
 
-def find_sample_component_ids_by_sample_id(sample_component_id, connection_name = "default"):
-    connection = get_connection(connection_name)
-    db = connection.get_database()
+def find_sample_component_ids_by_sample_id(db, sample_component_id, connection_name = "default"):
     if isinstance(sample_component_id, ObjectId):
         return db.sample_components.find({"sample._id": sample_component_id})
     return db.sample_components.find({"sample._id": ObjectId(sample_component_id)})

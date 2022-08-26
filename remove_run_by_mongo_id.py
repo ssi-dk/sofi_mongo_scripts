@@ -3,7 +3,7 @@ from sys import exit
 import argparse
 
 import api
-from api import sample_components
+from api import sample_component
 
 def delete_run_documents(run):
     # Delete sample and sample_component documents

@@ -76,9 +76,7 @@ def save_sample(data_dict, upsert: bool = False, connection_name = "default"):
 
 
 
-def get_sample_by_id(sample_id, connection_name = "default"):
-    connection = get_connection(connection_name)
-    db = connection.get_database()
+def get_sample_by_id(db, sample_id):
     return db.samples.find_one({"_id": ObjectId(sample_id)})
 
 
