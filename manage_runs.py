@@ -67,10 +67,13 @@ number_of_sap_analysis_results = db.sap_analysis_results.count_documents({'run_i
 print()
 print(f"Found {number_of_sap_analysis_results} SOFI analysis result(s) found related to {args.inst} run {args.part}.")
 sap_analysis_results = db.sap_analysis_results.find({'run_id': regex})
+sap_ids = list()
 for a in sap_analysis_results:
     print(f"_id: {a['_id']}, run_id: {a['run_id']}")
+    sap_ids.append(a['_id'])
 if args.delete:
     really_delete = input("Should these be deleted (y/N)? ")
-    if really_delete == 'y':
-        # Todo: do the deletion.
-        pass
+    if really_delete == 'y' and not args.fake:
+        for id in sap_ids:
+            db.sap_analysis_results.delete_one({'_id': id})
+        print(f"Deleted SOFI analysis results for {args.inst} run {args.part}.")
