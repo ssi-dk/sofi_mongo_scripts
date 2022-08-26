@@ -23,12 +23,12 @@ def delete_run(run):
                 component_names = [component['name'] for component in sample['components']]
                 print ("Sample [Components]:")
                 print(sample['name'], component_names)
-                sample_components = list(sample_component.find_sample_component_ids_by_sample_id(db, sample['_id']))
+                sample_components = list(api.sample_components.find_sample_component_ids_by_sample_id(db, sample['_id']))
                 sample_component_object_ids = [sc['_id'] for sc in sample_components]
                 for oid in sample_component_object_ids:
                     # Delete sample_component document
                     if not args.fake:
-                        api.sample_component.delete_sample_component_by_id(oid)
+                        api.sample_components.delete_sample_component_by_id(oid)
                 print(f"Deleted {len(sample_components)} sample_component documents (unless fake)")
                 # Delete sample document
                 if not args.fake:
@@ -37,7 +37,7 @@ def delete_run(run):
 
         # Delete run document
         if not args.fake:
-            api.runs.delete_run_by_id(run['_id'])
+            api.runs.delete_run_by_id(db, run['_id'])
         print(f"Deleted run document with id {run['_id']} (unless fake)")
 
 parser = argparse.ArgumentParser(

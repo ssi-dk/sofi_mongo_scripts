@@ -3,7 +3,7 @@ from sys import exit
 
 from pymongo import MongoClient
 
-from . import samples
+from . import components, runs, sample_components, samples
 
 connection_string = getenv('BIFROST_DB_KEY')
 if not connection_string:

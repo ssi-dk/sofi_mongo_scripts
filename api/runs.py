@@ -1,20 +1,14 @@
 import pymongo
 from bson.objectid import ObjectId
 
-from .utils import get_connection, date_now
 
-
-def check_run_name(name, connection_name = "default"):
-    connection = get_connection(connection_name)
-    db = connection.get_database()
+def check_run_name(db, name, connection_name = "default"):
     # Fastest.
     run = db.runs.find({"name": name}).explain().get('executionStats', None).get('nReturned', 0)
     return run != 0
 
 
-def get_run_list(run_type = None, connection_name = "default"):
-    connection = get_connection(connection_name)
-    db = connection.get_database()
+def get_run_list(db, run_type = None, connection_name = "default"):
     if run_type is None:
         query = {}
     elif isinstance(run_type, list):
@@ -28,9 +22,7 @@ def get_run_list(run_type = None, connection_name = "default"):
     return runs
 
 
-def get_last_runs(run, n, runtype, connection_name = "default"):
-    connection = get_connection(connection_name)
-    db = connection.get_database()
+def get_last_runs(db, run, n, runtype, connection_name = "default"):
 
     run = db.runs.find_one({"name": run})
     run_date = run.get("metadata", {}).get("created_at")
@@ -50,42 +42,30 @@ def get_last_runs(run, n, runtype, connection_name = "default"):
                              {"name": 1, "samples": 1}).sort([['metadata.created_at', pymongo.DESCENDING]]).limit(n))
 
 
-def get_run(run_name, connection_name = "default"):
+def get_run(db, run_name, connection_name = "default"):
     # Return only one run or None.
-    connection = get_connection(connection_name)
-    db = connection.get_database()
     return db.runs.find_one({"name": run_name})
 
 
-def get_runs(run_name, connection_name = "default"):
+def get_runs(db, run_name, connection_name = "default"):
     # Return a list of runs or None.
-    connection = get_connection(connection_name)
-    db = connection.get_database()
     return db.runs.find({"name": run_name})
 
 
-def get_run_by_id(run_id, connection_name = "default"):
-    connection = get_connection(connection_name)
-    db = connection.get_database()
+def get_run_by_id(db, run_id, connection_name = "default"):
     return db.runs.find_one({"_id": ObjectId(run_id)})
 
 
-def delete_run_by_id(run_id, connection_name = "default"):
-    connection = get_connection(connection_name)
-    db = connection.get_database()
+def delete_run_by_id(db, run_id, connection_name = "default"):
     return db.runs.delete_one({"_id": ObjectId(run_id)})
 
 
-def get_comment(run_id, connection_name = "default"):
-    connection = get_connection(connection_name)
-    db = connection.get_database()
+def get_comment(db, run_id, connection_name = "default"):
     return db.runs.find_one(
         {"_id": run_id}, {"Comments": 1})
 
 
-def set_comment(run_id, comment, connection_name = "default"):
-    connection = get_connection(connection_name)
-    db = connection.get_database()
+def set_comment(db, run_id, comment, connection_name = "default"):
     ret = db.runs.find_one_and_update(
         {"_id": run_id}, {"$set": {"Comments": comment}})
     if ret is not None:
@@ -94,7 +74,7 @@ def set_comment(run_id, comment, connection_name = "default"):
         return 0
 
 
-def create_virtual_run(name, ip, samples, connection_name = "default"):
+def create_virtual_run(db, name, ip, samples, connection_name = "default"):
     """
     Create virtual run. No files, only in db.
     Name is string
@@ -122,18 +102,14 @@ def create_virtual_run(name, ip, samples, connection_name = "default"):
         },
         "type"      : "virtual"
     }
-    connection = get_connection(connection_name)
-    db = connection.get_database()
     rid = db.runs.insert_one(run).inserted_id
     return rid
 
 
-def add_samples_to_virtual_run(name, ip, samples, connection_name = "default"):
+def add_samples_to_virtual_run(db, name, ip, samples, connection_name = "default"):
     """
     Adds samples to virtual run, check that samples don't exist in the run before.
     """
-    connection = get_connection(connection_name)
-    db = connection.get_database()
     run = db.runs.find_one({"name": name, "type": "virtual"})
     if run is None:
         raise ValueError("Virtual run not found")
@@ -152,12 +128,10 @@ def add_samples_to_virtual_run(name, ip, samples, connection_name = "default"):
     })
 
 
-def remove_samples_from_virtual_run(name, ip, sample_ids, connection_name = "default"):
+def remove_samples_from_virtual_run(db, name, ip, sample_ids, connection_name = "default"):
     """
     Adds samples to virtual run, check that samples don't exist in the run before.
     """
-    connection = get_connection(connection_name)
-    db = connection.get_database()
     run = db.runs.find_one({"name": name, "type": "virtual"})
     if run is None:
         raise ValueError("Virtual run not found")
