@@ -46,11 +46,16 @@ parser.add_argument('-d', '--delete', action='store_true', help="Interactively d
 parser.add_argument('-f', '--fake', action='store_true', help="Don't really delete anything (only for testing script)")
 args = parser.parse_args()
 
-if args.inst not in ['ssi', 'fvst']:
-    print("ERROR: inst must be either 'ssi' or 'fvst'.")
+INST_OPTIONS = ['ssi', 'fvst', 'none']
+if args.inst not in INST_OPTIONS:
+    print(f"ERROR: inst must be in {INST_OPTIONS}.")
     exit(1)
 
-prefix: str = '.*N_WGS_' if args.inst == 'ssi' else '[Rr][Uu][Nn]'
+prefix:str = ''
+if args.inst == 'ssi':
+    prefix = '.*N_WGS_'
+if args.inst == 'fvst':
+    prefix = '[Rr][Uu][Nn]'
 regex = re.compile(prefix + args.part + '.*')
 number_of_runs = db.runs.count_documents({'name':  regex})
 print(f"{number_of_runs} matching run(s) found.")
