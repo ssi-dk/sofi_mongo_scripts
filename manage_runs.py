@@ -38,15 +38,16 @@ def delete_run(run):
         api.runs.delete_run_by_id(db, run['_id'])
     print(f"Deleted run document with id {run['_id']} (unless fake)")
 
+INST_OPTIONS = ['ssi', 'fvst', 'none']
+
 parser = argparse.ArgumentParser(
     description='Find and optionally delete a run and related documents from MongoDB.')
-parser.add_argument('inst', type=str, help="Institution, either 'ssi' or 'fvst'")
+parser.add_argument('inst', type=str, help=f"Institution, must be in {INST_OPTIONS}")
 parser.add_argument('part', type=str, help="Partial run name search for")
 parser.add_argument('-d', '--delete', action='store_true', help="Interactively delete documents")
 parser.add_argument('-f', '--fake', action='store_true', help="Don't really delete anything (only for testing script)")
 args = parser.parse_args()
 
-INST_OPTIONS = ['ssi', 'fvst', 'none']
 if args.inst not in INST_OPTIONS:
     print(f"ERROR: inst must be in {INST_OPTIONS}.")
     exit(1)
@@ -58,7 +59,7 @@ if args.inst == 'fvst':
     prefix = '[Rr][Uu][Nn]'
 regex = re.compile(prefix + args.part + '.*')
 number_of_runs = db.runs.count_documents({'name':  regex})
-print(f"{number_of_runs} matching run(s) found.")
+print(f"{number_of_runs} matching run(s) found:")
 runs = db.runs.find({'name':  regex})
 for run in runs:
     print(f"_id: {run['_id']}, name: {run['name']}")
@@ -70,7 +71,7 @@ for run in runs:
 # Now for the sap_analysis_results part.
 number_of_sap_analysis_results = db.sap_analysis_results.count_documents({'run_id': regex})
 print()
-print(f"Found {number_of_sap_analysis_results} SOFI analysis result(s) found related to {args.inst} run {args.part}.")
+print(f"{number_of_sap_analysis_results} related SOFI analysis result(s) found:")
 sap_analysis_results = db.sap_analysis_results.find({'run_id': regex})
 sap_ids = list()
 for a in sap_analysis_results:
