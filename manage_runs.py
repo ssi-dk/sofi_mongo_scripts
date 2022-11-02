@@ -5,7 +5,7 @@ import re
 import api
 from api import db
 
-def bifrost_deletion_loop(run):
+def bifrost_deletion_loop(run:str, fake:bool):
     # Delete sample and sample_component documents
     for run_sample in run['samples']:
         sample = api.samples.get_sample_by_id(db, run_sample['_id'])
@@ -41,7 +41,7 @@ def bifrost_deletion_loop(run):
         print(f"Running script with fake option - did not REALLY delete run document with id {run['_id']} and name {run['name']}")
 
 
-def sofi_deletion_loop(run_id):
+def sofi_deletion_loop(run_id:str, fake:bool):
     number_of_sap_analysis_results = db.sap_analysis_results.count_documents({'run_id': run_id})
     print()
     if number_of_sap_analysis_results == 0:
@@ -55,7 +55,7 @@ def sofi_deletion_loop(run_id):
             sap_ids.append(a['_id'])
         if args.delete:
             confirm = input("Should these be deleted (y/N)? ")
-            if confirm == 'y' and not args.fake:
+            if confirm == 'y' and not fake:
                 for id in sap_ids:
                     db.sap_analysis_results.delete_one({'_id': id})
                 print(f"Deleted SOFI analysis results for {args.inst} run {args.part}.")
@@ -75,6 +75,7 @@ if args.inst not in INST_OPTIONS:
     print(f"ERROR: inst must be in {INST_OPTIONS}.")
     exit(1)
 
+fake:bool = args.fake
 prefix:str = ''
 if args.inst == 'ssi':
     prefix = '.*N_WGS_'
@@ -89,5 +90,6 @@ for run in runs:
     if args.delete:
         confirm = input("Delete this run and related Bifrost MongoDB documents (y/N)? ")
         if confirm == 'y':
-            bifrost_deletion_loop(run)
-        sofi_deletion_loop(run['name'])
+            bifrost_deletion_loop(run, fake)
+        sofi_deletion_loop(run['name'], fake)
+        print()
