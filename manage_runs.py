@@ -36,7 +36,9 @@ def delete_run(run):
     # Delete run document
     if not args.fake:
         api.runs.delete_run_by_id(db, run['_id'])
-    print(f"Deleted run document with id {run['_id']} (unless fake)")
+        print(f"Deleted run document with id {run['_id']}")
+    else:
+        print(f"Running script with fake option - did not really delete run document with id {run['_id']}")
 
 INST_OPTIONS = ['ssi', 'fvst', 'none']
 
@@ -64,8 +66,8 @@ runs = db.runs.find({'name':  regex})
 for run in runs:
     print(f"_id: {run['_id']}, name: {run['name']}")
     if args.delete:
-        really_delete = input("Delete this run and related documents (y/N)? ")
-        if really_delete == 'y':
+        confirm = input("Delete this run and related Bifrost MongoDB documents (y/N)? ")
+        if confirm == 'y':
             delete_run(run)
 
 # Now for the sap_analysis_results part.
@@ -78,8 +80,8 @@ for a in sap_analysis_results:
     print(f"_id: {a['_id']}, run_id: {a['run_id']}")
     sap_ids.append(a['_id'])
 if args.delete:
-    really_delete = input("Should these be deleted (y/N)? ")
-    if really_delete == 'y' and not args.fake:
+    confirm = input("Should these be deleted (y/N)? ")
+    if confirm == 'y' and not args.fake:
         for id in sap_ids:
             db.sap_analysis_results.delete_one({'_id': id})
         print(f"Deleted SOFI analysis results for {args.inst} run {args.part}.")
