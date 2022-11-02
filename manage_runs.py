@@ -5,7 +5,7 @@ import re
 import api
 from api import db
 
-def delete_run(run):
+def bifrost_deletion_loop(run):
     # Delete sample and sample_component documents
     for run_sample in run['samples']:
         sample = api.samples.get_sample_by_id(db, run_sample['_id'])
@@ -68,7 +68,7 @@ for run in runs:
     if args.delete:
         confirm = input("Delete this run and related Bifrost MongoDB documents (y/N)? ")
         if confirm == 'y':
-            delete_run(run)
+            bifrost_deletion_loop(run)
         
 
 # Now for the sap_analysis_results part.
