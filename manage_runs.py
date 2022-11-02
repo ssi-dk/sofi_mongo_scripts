@@ -38,7 +38,7 @@ def delete_run(run):
         api.runs.delete_run_by_id(db, run['_id'])
         print(f"Deleted run document with id {run['_id']} and name {run['name']}")
     else:
-        print(f"Running script with fake option - did not really delete run document with id {run['_id']}")
+        print(f"Running script with fake option - did not REALLY delete run document with id {run['_id']} and name {run['name']}")
 
 INST_OPTIONS = ['ssi', 'fvst', 'none']
 
