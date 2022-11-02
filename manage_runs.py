@@ -36,7 +36,7 @@ def delete_run(run):
     # Delete run document
     if not args.fake:
         api.runs.delete_run_by_id(db, run['_id'])
-        print(f"Deleted run document with id {run['_id']}")
+        print(f"Deleted run document with id {run['_id']} and name {run['name']}")
     else:
         print(f"Running script with fake option - did not really delete run document with id {run['_id']}")
 
@@ -69,6 +69,7 @@ for run in runs:
         confirm = input("Delete this run and related Bifrost MongoDB documents (y/N)? ")
         if confirm == 'y':
             delete_run(run)
+        
 
 # Now for the sap_analysis_results part.
 number_of_sap_analysis_results = db.sap_analysis_results.count_documents({'run_id': regex})
