@@ -40,6 +40,24 @@ def bifrost_deletion_loop(run):
     else:
         print(f"Running script with fake option - did not REALLY delete run document with id {run['_id']} and name {run['name']}")
 
+
+def sofi_deletion_loop(run_id):
+    number_of_sap_analysis_results = db.sap_analysis_results.count_documents({'run_id': run_id})
+    print()
+    print(f"{number_of_sap_analysis_results} related SOFI analysis result(s) found:")
+    sap_analysis_results = db.sap_analysis_results.find({'run_id': run_id})
+    sap_ids = list()
+    for a in sap_analysis_results:
+        print(f"_id: {a['_id']}, run_id: {a['run_id']}")
+        sap_ids.append(a['_id'])
+    if args.delete:
+        confirm = input("Should these be deleted (y/N)? ")
+        if confirm == 'y' and not args.fake:
+            for id in sap_ids:
+                db.sap_analysis_results.delete_one({'_id': id})
+            print(f"Deleted SOFI analysis results for {args.inst} run {args.part}.")
+
+
 INST_OPTIONS = ['ssi', 'fvst', 'none']
 
 parser = argparse.ArgumentParser(
@@ -69,20 +87,4 @@ for run in runs:
         confirm = input("Delete this run and related Bifrost MongoDB documents (y/N)? ")
         if confirm == 'y':
             bifrost_deletion_loop(run)
-        
-
-# Now for the sap_analysis_results part.
-number_of_sap_analysis_results = db.sap_analysis_results.count_documents({'run_id': regex})
-print()
-print(f"{number_of_sap_analysis_results} related SOFI analysis result(s) found:")
-sap_analysis_results = db.sap_analysis_results.find({'run_id': regex})
-sap_ids = list()
-for a in sap_analysis_results:
-    print(f"_id: {a['_id']}, run_id: {a['run_id']}")
-    sap_ids.append(a['_id'])
-if args.delete:
-    confirm = input("Should these be deleted (y/N)? ")
-    if confirm == 'y' and not args.fake:
-        for id in sap_ids:
-            db.sap_analysis_results.delete_one({'_id': id})
-        print(f"Deleted SOFI analysis results for {args.inst} run {args.part}.")
+        sofi_deletion_loop(run['name'])
