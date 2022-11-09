@@ -69,6 +69,7 @@ parser.add_argument('inst', type=str, help=f"Institution, must be in {INST_OPTIO
 parser.add_argument('part', type=str, help="Partial run name search for")
 parser.add_argument('-d', '--delete', action='store_true', help="Interactively delete documents")
 parser.add_argument('-f', '--fake', action='store_true', help="Don't really delete anything (only for testing script)")
+parser.add_argument('--force', action='store_true', help="Deletes runs and associated data without asking questions.")
 args = parser.parse_args()
 
 if args.inst not in INST_OPTIONS:
@@ -88,8 +89,9 @@ runs = db.runs.find({'name':  regex})
 for run in runs:
     print(f"_id: {run['_id']}, name: {run['name']}")
     if args.delete:
-        confirm = input("Delete this run and related Bifrost MongoDB documents (y/N)? ")
-        if confirm == 'y':
+        if not args.force:
+            confirm = input("Delete this run and related Bifrost MongoDB documents (y/N)? ")
+        if args.force or confirm == 'y':
             bifrost_deletion_loop(run, fake)
         sofi_deletion_loop(run['name'], fake)
         print()
